@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Reportes Agrupados UTCD</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="config.js"></script>
+  <style>
+    :root{--bg:#0b141d;--card:#14212d;--card2:#1a2a3a;--border:#2c3e50;--text:#fff;--muted:#a0aec0;--blue:#3b82f6;--green:#27ae60;--green2:#219653;--red:#e74c3c;--red2:#c0392b;--yellow:#f1c40f;}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);padding-bottom:22px;overflow-x:hidden}
+    header{position:sticky;top:0;z-index:10;background:rgba(20,33,45,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:8px 12px 10px}
+    .brand{display:flex;justify-content:center;align-items:center;gap:10px}.logo-box{background:#fff;border-radius:7px;padding:4px 7px}.logo-box img{height:27px;display:block}.brand h2{margin:0;font-size:18px;letter-spacing:1px}
+    .user-info{margin-top:7px;display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(0,0,0,.22);border-radius:20px;padding:6px 8px;font-size:12px;color:var(--muted)}.user-info b{color:var(--blue)}
+    .logout{border:1px solid var(--red);color:var(--red);background:transparent;border-radius:14px;padding:4px 10px;font-weight:700}
+    .container{max-width:760px;margin:0 auto;padding:14px 12px}.btn-new{width:100%;border:none;border-radius:12px;background:var(--green);color:white;font-size:16px;font-weight:800;padding:14px;display:flex;justify-content:center;align-items:center;gap:8px;box-shadow:0 6px 16px rgba(39,174,96,.28)}
+    .filters{display:flex;gap:8px;overflow-x:auto;margin:14px 0 8px;padding-bottom:4px}.filters::-webkit-scrollbar{display:none}.filter{flex:1;min-width:105px;border:1px solid var(--border);background:#1a2a3a;color:var(--muted);border-radius:20px;padding:9px 11px;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px}.filter.active.todos{background:var(--blue);border-color:var(--blue);color:white}.filter.active.pendiente{background:var(--red);border-color:var(--red);color:white}.filter.active.ejecutado{background:var(--green);border-color:var(--green);color:white}
+    .tools{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:8px 0 12px;color:var(--muted);font-size:13px}.tools select{background:#16222f;color:white;border:1px solid var(--border);padding:8px;border-radius:9px}.refresh{border:1px solid var(--blue);color:var(--blue);background:transparent;border-radius:9px;padding:8px 10px;font-weight:800}
+    .grid{display:grid;grid-template-columns:1fr;gap:12px}.card{background:#1a2a3a;border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:0 4px 10px rgba(0,0,0,.22)}.card.ejecutado{border-color:rgba(39,174,96,.55)}
+    .card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--border);padding-bottom:10px}.padre{font-size:22px;font-weight:900;letter-spacing:.5px}.badge{border-radius:16px;padding:6px 9px;font-size:11px;font-weight:900;color:white;white-space:nowrap}.badge.pendiente{background:var(--red)}.badge.ejecutado{background:var(--green)}
+    .body p{margin:9px 0;color:var(--muted);font-size:14px;display:flex;gap:9px;align-items:center}.body i{color:var(--blue);width:16px}.body strong{color:white}
+    .actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:10px}.btn-card{border-radius:20px;padding:8px 12px;font-weight:900;font-size:13px;background:transparent;display:flex;align-items:center;gap:6px}.btn-view{border:1px solid var(--yellow);color:var(--yellow)}.btn-edit{border:1px solid var(--blue);color:var(--blue)}.btn-lock{border:1px solid var(--border);color:var(--muted);opacity:.75}.estado-select{border:none;border-radius:16px;padding:6px 8px;color:#fff;font-size:11px;font-weight:900;outline:none;max-width:118px}.estado-select.pendiente{background:var(--red)}.estado-select.ejecutado{background:var(--green)}.estado-select:disabled{opacity:.95}
+    .empty,.loading{grid-column:1/-1;text-align:center;color:var(--muted);padding:30px 10px}.loading i{color:var(--blue);font-size:28px}.danger{color:var(--red)}
+    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:999;align-items:center;justify-content:center;padding:14px}.modal-box{width:100%;max-width:430px;max-height:86vh;overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px}.modal-title{display:flex;justify-content:space-between;gap:10px;align-items:center}.modal-title h3{margin:0;color:var(--blue)}.close{border:none;background:transparent;color:white;font-size:24px}.list-asoc{margin-top:12px;display:grid;gap:8px}.chip{background:#0f1b27;border:1px solid var(--border);border-radius:10px;padding:10px;font-weight:800;text-align:center}.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;align-items:center;justify-content:center;color:white;font-weight:900}.overlay-box{background:#14212d;border:1px solid var(--border);border-radius:14px;padding:18px 22px;text-align:center}.overlay i{font-size:30px;color:var(--blue);margin-bottom:8px}
+    button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.65}
+  </style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo-box"><img src="https://raw.githubusercontent.com/zelaya27/IMAGENES_AZ/main/UTCD%20Vertical.png"></div><h2>REPORTES AGRUPADOS</h2></div>
+  <div class="user-info"><span><i class="fas fa-user"></i> <b id="u">Usuario</b></span><span>|</span><span><i class="fas fa-map-marker-alt"></i> <b id="s">Sector</b></span><span>|</span><span>Tipo <b id="t">3</b></span><button class="logout" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i> Salir</button></div>
+</header>
+
+<main class="container">
+  <button id="btnNuevo" class="btn-new" onclick="nuevo()"><i class="fas fa-plus-circle"></i> NUEVO REPORTE</button>
+  <div class="filters">
+    <button class="filter active todos" data-estado="TODOS" onclick="filtrar('TODOS',this)"><i class="fas fa-list"></i> Todos</button>
+    <button class="filter pendiente" data-estado="PENDIENTE" onclick="filtrar('PENDIENTE',this)"><i class="fas fa-clock"></i> Pendientes</button>
+    <button class="filter ejecutado" data-estado="EJECUTADO" onclick="filtrar('EJECUTADO',this)"><i class="fas fa-check-circle"></i> Ejecutados</button>
+  </div>
+  <div class="tools">
+    <label>Mostrar: <select id="limit" onchange="renderizar()"><option value="10">10</option><option value="20">20</option><option value="50">50</option><option value="ALL">Todos</option></select></label>
+    <button id="btnRefresh" class="refresh" onclick="cargarReportes(this)"><i class="fas fa-sync-alt"></i> Actualizar</button>
+  </div>
+  <div id="grid" class="grid"></div>
+</main>
+
+<div id="modal" class="modal">
+  <div class="modal-box">
+    <div class="modal-title"><h3 id="modalPadre">Reporte</h3><button class="close" onclick="cerrarModal()">×</button></div>
+    <p style="color:var(--muted);margin-bottom:0">Reportes asociados:</p>
+    <div id="listaAsociados" class="list-asoc"></div>
+  </div>
+</div>
+<div id="overlay" class="overlay"><div class="overlay-box"><i class="fas fa-spinner fa-spin"></i><div>Cargando...</div></div></div>
+
+<script>
+let reportes=[];let filtro='TODOS';
+function sesion(){return{usuario:sessionStorage.getItem('usuario')||'',sector:sessionStorage.getItem('sector')||'',tipoUsuario:sessionStorage.getItem('tipoUsuario')||'3'}}
+function validarSesion(){const se=sesion();if(!se.usuario){location.href='index.html';return false}document.getElementById('u').textContent=se.usuario;document.getElementById('s').textContent=se.sector;document.getElementById('t').textContent=se.tipoUsuario;return true}
+function setLoading(btn,loading,text){if(!btn)return;if(loading){btn.dataset.old=btn.innerHTML;btn.disabled=true;btn.innerHTML=`<i class="fas fa-spinner fa-spin"></i> ${text||'Cargando...'}`}else{btn.disabled=false;if(btn.dataset.old)btn.innerHTML=btn.dataset.old}}
+function overlay(show,text){const o=document.getElementById('overlay');if(text)o.querySelector('div div').textContent=text;o.style.display=show?'flex':'none'}
+function api(action,params={}){return new Promise((resolve,reject)=>{if(!CONFIG.URL_APPS_SCRIPT||CONFIG.URL_APPS_SCRIPT.includes('PEGAR_AQUI'))return reject(new Error('Falta configurar URL_APPS_SCRIPT en config.js'));const cb='cb_'+Date.now()+'_'+Math.floor(Math.random()*99999);params.action=action;params.callback=cb;const qs=Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k]??'')).join('&');const sc=document.createElement('script');const timer=setTimeout(()=>{clean();reject(new Error('Tiempo de espera agotado.'))},30000);function clean(){clearTimeout(timer);delete window[cb];if(sc.parentNode)sc.parentNode.removeChild(sc)}window[cb]=data=>{clean();data&&data.ok?resolve(data):reject(new Error((data&&data.error)||'Error desconocido'))};sc.onerror=()=>{clean();reject(new Error('No se pudo conectar con Apps Script.'))};sc.src=CONFIG.URL_APPS_SCRIPT+'?'+qs;document.body.appendChild(sc)})}
+function cerrarSesion(){sessionStorage.clear();location.href='index.html'}
+function nuevo(){location.href='app.html'}
+async function cargarReportes(btn){setLoading(btn,true,'Actualizando...');document.getElementById('grid').innerHTML='<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Cargando reportes...</p></div>';try{const se=sesion();const data=await api('obtenerReportes',se);reportes=data.reportes||[];renderizar()}catch(e){document.getElementById('grid').innerHTML=`<div class="empty danger"><i class="fas fa-exclamation-triangle"></i><p>${e.message}</p></div>`}finally{setLoading(btn,false)}}
+function filtrar(est,btn){filtro=est;document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderizar()}
+function renderizar(){const grid=document.getElementById('grid');grid.innerHTML='';let arr=reportes.filter(r=>filtro==='TODOS'||r.estado===filtro);const lim=document.getElementById('limit').value;if(lim!=='ALL')arr=arr.slice(0,Number(lim));if(!arr.length){grid.innerHTML='<div class="empty">No hay registros para mostrar.</div>';return}const tipo=sesion().tipoUsuario;arr.forEach(r=>{const ejecutado=r.estado==='EJECUTADO';const puedeEditar=!ejecutado;const puedeEstado=tipo==='1'||tipo==='2';const card=document.createElement('div');card.className='card '+(ejecutado?'ejecutado':'');const estadoControl=puedeEstado?`<select class="estado-select ${r.estado.toLowerCase()}" onchange="cambiarEstado('${r.id}',this.value,'${r.estado}',this)"><option ${r.estado==='PENDIENTE'?'selected':''}>PENDIENTE</option><option ${r.estado==='EJECUTADO'?'selected':''}>EJECUTADO</option></select>`:`<span class="badge ${r.estado.toLowerCase()}">${r.estado}</span>`;card.innerHTML=`<div class="card-head"><div class="padre">${r.reportePadre}</div>${estadoControl}</div><div class="body"><p><i class="far fa-calendar-alt"></i> <strong>${r.fecha||'Sin fecha'}</strong></p><p><i class="fas fa-user"></i> ${r.usuario||''}</p><p><i class="fas fa-link"></i> Asociados: <strong>${r.asociados||0}</strong></p></div><div class="actions"><button class="btn-card btn-view" onclick="verDetalle('${r.id}',this)"><i class="fas fa-eye"></i> Ver</button><button class="btn-card ${puedeEditar?'btn-edit':'btn-lock'}" ${puedeEditar?'':'disabled'} onclick="editar('${r.id}')"><i class="fas ${puedeEditar?'fa-pen':'fa-lock'}"></i> ${puedeEditar?'Editar':'Bloqueado'}</button></div>`;grid.appendChild(card)})}
+function editar(id){location.href='app.html?id='+encodeURIComponent(id)}
+async function verDetalle(id,btn){setLoading(btn,true,'Abriendo...');try{const data=await api('obtenerReporte',{id});const r=data.reporte;document.getElementById('modalPadre').textContent=r.reportePadre+' · '+r.asociados.length+' asociados';document.getElementById('listaAsociados').innerHTML=(r.asociados||[]).map(a=>`<div class="chip">${a}</div>`).join('')||'<div class="chip">Sin asociados</div>';document.getElementById('modal').style.display='flex'}catch(e){alert(e.message)}finally{setLoading(btn,false)}}
+function cerrarModal(){document.getElementById('modal').style.display='none'}
+async function cambiarEstado(id,nuevo,anterior,sel){if(nuevo===anterior)return;if(!confirm('¿Seguro que desea cambiar el estado a '+nuevo+'?')){sel.value=anterior;return}overlay(true,'Actualizando estado...');try{const se=sesion();await api('cambiarEstado',{id,estado:nuevo,usuario:se.usuario,tipoUsuario:se.tipoUsuario});const r=reportes.find(x=>x.id===id);if(r)r.estado=nuevo;renderizar()}catch(e){alert(e.message);sel.value=anterior;await cargarReportes()}finally{overlay(false)}}
+document.addEventListener('DOMContentLoaded',()=>{if(validarSesion())cargarReportes()});
+</script>
+</body>
+</html>

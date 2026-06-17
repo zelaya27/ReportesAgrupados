@@ -6,6 +6,7 @@
   <title>Reportes Agrupados UTCD</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="config.js"></script>
+
   <style>
     :root{
       --ms-blue:#0078d4;
@@ -23,6 +24,7 @@
       --danger-bg:#fde7e9;
       --shadow:0 10px 28px rgba(0,0,0,.10);
     }
+
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     html,body{margin:0;min-height:100%;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
     body{padding-bottom:92px}
@@ -130,7 +132,6 @@
 
 <button class="fab" onclick="abrirModalNuevo()" title="Nuevo reporte"><i class="fas fa-plus"></i></button>
 
-<!-- Modal para crear nuevo reporte -->
 <div id="modalNuevo" class="modal">
   <div class="sheet">
     <div class="sheet-head">
@@ -161,7 +162,6 @@
   </div>
 </div>
 
-<!-- Confirmación para eliminar -->
 <div id="modalConfirm" class="modal">
   <div class="confirm-box">
     <h3>Eliminar reporte</h3>
@@ -236,48 +236,27 @@ function setLoading(btn, loading, text) {
 }
 
 /******************************************************
- * API JSONP
+ * API POR FETCH POST
+ * Compatible con Código.gs usando doPost(e).
  ******************************************************/
-function api(action, params = {}) {
-  return new Promise((resolve, reject) => {
-    if (!window.CONFIG || !CONFIG.URL_APPS_SCRIPT || CONFIG.URL_APPS_SCRIPT.includes('PEGAR_AQUI')) {
-      reject(new Error('Falta configurar URL_APPS_SCRIPT en config.js'));
-      return;
-    }
+async function api(action, params = {}) {
+  if (!window.CONFIG || !window.CONFIG.URL_APPS_SCRIPT) {
+    throw new Error('No se cargó config.js o falta URL_APPS_SCRIPT.');
+  }
 
-    const cb = 'cb_' + Date.now() + '_' + Math.floor(Math.random() * 99999);
-    params.action = action;
-    params.callback = cb;
-
-    const qs = Object.keys(params)
-      .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k] ?? ''))
-      .join('&');
-
-    const sc = document.createElement('script');
-    const timer = setTimeout(() => {
-      clean();
-      reject(new Error('Tiempo de espera agotado.'));
-    }, 30000);
-
-    function clean() {
-      clearTimeout(timer);
-      delete window[cb];
-      if (sc.parentNode) sc.parentNode.removeChild(sc);
-    }
-
-    window[cb] = data => {
-      clean();
-      data && data.ok ? resolve(data) : reject(new Error((data && data.error) || 'Error desconocido'));
-    };
-
-    sc.onerror = () => {
-      clean();
-      reject(new Error('No se pudo conectar con Apps Script.'));
-    };
-
-    sc.src = CONFIG.URL_APPS_SCRIPT + '?' + qs;
-    document.body.appendChild(sc);
+  const response = await fetch(window.CONFIG.URL_APPS_SCRIPT, {
+    method: 'POST',
+    body: JSON.stringify({ action, ...params })
   });
+
+  const text = await response.text();
+
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    console.error('Respuesta Apps Script:', text);
+    throw new Error('Apps Script no devolvió JSON válido.');
+  }
 }
 
 function filtrar(est) {
@@ -287,9 +266,6 @@ function filtrar(est) {
   cargarReportes();
 }
 
-/******************************************************
- * Consulta reportes del usuario/sector logueado.
- ******************************************************/
 async function cargarReportes() {
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = '<tr><td colspan="4" class="loading"><i class="fas fa-spinner fa-spin"></i><br>Cargando...</td></tr>';
@@ -301,6 +277,8 @@ async function cargarReportes() {
       sector: se.sector,
       estado: filtro
     });
+
+    if (!data.ok) throw new Error(data.error || 'No se pudieron cargar reportes.');
 
     reportes = data.reportes || [];
     renderizar();
@@ -314,9 +292,7 @@ function renderizar() {
   const limit = document.getElementById('limit').value;
   let data = reportes.slice();
 
-  if (limit !== 'ALL') {
-    data = data.slice(0, Number(limit));
-  }
+  if (limit !== 'ALL') data = data.slice(0, Number(limit));
 
   document.getElementById('resumen').textContent = (filtro === 'PENDIENTE' ? 'Pendientes' : 'Ejecutados') + ' · ' + reportes.length;
 
@@ -333,8 +309,8 @@ function renderizar() {
 
     return `<tr>
       <td class="date">${fecha}</td>
-      <td class="num">${r.reportePadre}</td>
-      <td class="num">${r.reporteAsociado}</td>
+      <td class="num">${r.reportePadre || ''}</td>
+      <td class="num">${r.reporteAsociado || ''}</td>
       <td class="col-acc">${accion}</td>
     </tr>`;
   }).join('');
@@ -376,15 +352,12 @@ function eliminarAsociado(btn) {
 
 function validarFormulario() {
   const padre = document.getElementById('padre').value.trim();
-  const asociados = [...document.querySelectorAll('.asociado')]
-    .map(i => i.value.trim())
-    .filter(Boolean);
+  const asociados = [...document.querySelectorAll('.asociado')].map(i => i.value.trim()).filter(Boolean);
 
   if (!/^\d{7}$/.test(padre)) throw new Error('El reporte padre debe tener 7 dígitos.');
   if (!asociados.length) throw new Error('Debe ingresar al menos un reporte asociado.');
 
   const usados = {};
-
   asociados.forEach((a, i) => {
     if (!/^\d{7}$/.test(a)) throw new Error('El reporte asociado #' + (i + 1) + ' debe tener 7 dígitos.');
     if (a === padre) throw new Error('El asociado no puede ser igual al reporte padre.');
@@ -396,9 +369,6 @@ function validarFormulario() {
   return { padre, asociados };
 }
 
-/******************************************************
- * Guarda: cada asociado genera una fila independiente.
- ******************************************************/
 async function guardarReporte() {
   const btn = document.getElementById('btnGuardar');
   const msg = document.getElementById('msg');
@@ -417,14 +387,14 @@ async function guardarReporte() {
 
   try {
     const se = sesion();
-    const payload = {
+    const data = await api('guardarReporte', {
       reportePadre: v.padre,
       asociados: v.asociados,
       usuario: se.usuario,
       sector: se.sector
-    };
+    });
 
-    const data = await api('guardarReporte', { payload: JSON.stringify(payload) });
+    if (!data.ok) throw new Error(data.error || 'No se pudo guardar.');
 
     dirty = false;
     document.getElementById('modalNuevo').classList.remove('show');
@@ -465,11 +435,13 @@ async function confirmarEliminar() {
 
   try {
     const se = sesion();
-    await api('eliminarReporte', {
+    const data = await api('eliminarReporte', {
       rowIndex: registroEliminar.rowIndex,
       usuario: se.usuario,
       sector: se.sector
     });
+
+    if (!data.ok) throw new Error(data.error || 'No se pudo eliminar.');
 
     cerrarConfirmacion();
     if (navigator.vibrate) navigator.vibrate(40);

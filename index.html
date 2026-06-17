@@ -1,367 +1,254 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reportes Agrupados UTCD</title>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="config.js"></script>
 
   <style>
-    :root{
-      --bg:#f3f6fb;
-      --card:#ffffff;
-      --ms-blue:#0078d4;
-      --ms-blue-dark:#005a9e;
-      --text:#201f1e;
-      --muted:#605e5c;
-      --border:#d2d0ce;
-      --danger:#d13438;
-      --shadow:0 16px 40px rgba(0,0,0,.14);
-    }
-
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-
     body{
       margin:0;
+      font-family:Segoe UI, Arial, sans-serif;
+      background:#f3f6fb;
       min-height:100vh;
-      font-family:'Segoe UI',Arial,sans-serif;
-      background:linear-gradient(160deg,#eef4fb,#f8fbff);
       display:flex;
       align-items:center;
       justify-content:center;
       padding:18px;
-      color:var(--text);
     }
 
-    .login-card{
+    .card{
       width:100%;
-      max-width:390px;
-      background:var(--card);
-      border:1px solid #edebe9;
-      border-radius:22px;
-      padding:24px 20px;
-      box-shadow:var(--shadow);
-    }
-
-    .logo-box{
-      width:92px;
-      margin:0 auto 14px;
+      max-width:380px;
       background:white;
-      border-radius:16px;
-      padding:9px;
-      box-shadow:0 8px 18px rgba(0,0,0,.12);
+      border-radius:20px;
+      padding:24px 20px;
+      box-shadow:0 14px 35px rgba(0,0,0,.15);
+      text-align:center;
     }
 
-    .logo-box img{
-      width:74px;
+    .logo{
+      background:white;
+      width:90px;
+      margin:0 auto 14px;
+      border-radius:14px;
+      padding:8px;
+      box-shadow:0 6px 15px rgba(0,0,0,.12);
+    }
+
+    .logo img{
+      width:72px;
       display:block;
       margin:auto;
     }
 
     h1{
       margin:0;
-      text-align:center;
       font-size:20px;
-      line-height:1.25;
-      color:var(--text);
-      letter-spacing:.4px;
+      color:#201f1e;
     }
 
     .sub{
-      text-align:center;
-      color:var(--muted);
-      font-size:13px;
       margin:7px 0 22px;
+      font-size:13px;
+      color:#605e5c;
     }
 
     label{
       display:block;
-      font-size:13px;
-      color:var(--muted);
-      font-weight:800;
-      margin-bottom:7px;
-    }
-
-    .field{
-      position:relative;
-      margin-bottom:15px;
-    }
-
-    .field i.left{
-      position:absolute;
-      left:13px;
-      top:41px;
-      color:var(--ms-blue);
-      z-index:2;
-    }
-
-    select,
-    input{
-      width:100%;
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:13px 13px 13px 40px;
-      font-size:16px;
-      outline:none;
-      color:var(--text);
-      background:white;
-    }
-
-    select:focus,
-    input:focus{
-      border-color:var(--ms-blue);
-      box-shadow:0 0 0 4px rgba(0,120,212,.13);
-    }
-
-    .toggle-pass{
-      position:absolute;
-      right:13px;
-      top:39px;
-      border:none;
-      background:transparent;
-      color:var(--muted);
-      font-size:16px;
-      cursor:pointer;
-      padding:3px;
-    }
-
-    .btn{
-      width:100%;
-      border:none;
-      border-radius:14px;
-      padding:14px;
-      background:var(--ms-blue);
-      color:white;
-      font-size:16px;
-      font-weight:900;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:9px;
-      cursor:pointer;
-      box-shadow:0 8px 20px rgba(0,120,212,.26);
-    }
-
-    .btn:active{transform:scale(.99)}
-    .btn:disabled{opacity:.7;cursor:not-allowed}
-
-    .msg{
-      min-height:19px;
-      margin-top:13px;
-      text-align:center;
-      color:var(--danger);
+      text-align:left;
       font-size:13px;
       font-weight:700;
+      color:#605e5c;
+      margin:12px 0 6px;
     }
 
-    .note{
-      margin-top:10px;
-      text-align:center;
-      font-size:12px;
-      color:var(--muted);
+    select,input{
+      width:100%;
+      box-sizing:border-box;
+      border:1px solid #d2d0ce;
+      border-radius:12px;
+      padding:13px;
+      font-size:16px;
+      outline:none;
+    }
+
+    select:focus,input:focus{
+      border-color:#0078d4;
+      box-shadow:0 0 0 4px rgba(0,120,212,.12);
+    }
+
+    button{
+      width:100%;
+      border:none;
+      border-radius:12px;
+      background:#0078d4;
+      color:white;
+      padding:14px;
+      margin-top:18px;
+      font-size:16px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    button:disabled{
+      opacity:.65;
+      cursor:not-allowed;
+    }
+
+    .msg{
+      min-height:20px;
+      margin-top:14px;
+      font-size:13px;
+      color:#d13438;
+      font-weight:700;
+      white-space:pre-line;
     }
   </style>
 </head>
 
 <body>
 
-  <main class="login-card">
-    <div class="logo-box">
-      <img src="https://raw.githubusercontent.com/zelaya27/IMAGENES_AZ/main/UTCD%20Vertical.png" alt="UTCD">
+  <div class="card">
+    <div class="logo">
+      <img src="https://raw.githubusercontent.com/zelaya27/IMAGENES_AZ/main/UTCD%20Vertical.png">
     </div>
 
     <h1>REPORTES AGRUPADOS UTCD</h1>
     <div class="sub">Ingreso de usuario operativo</div>
 
-    <div class="field">
-      <label for="usuario">Usuario</label>
-      <i class="fas fa-user left"></i>
-      <select id="usuario">
-        <option value="">Cargando usuarios...</option>
-      </select>
-    </div>
+    <label>Usuario</label>
+    <select id="usuario">
+      <option value="">Cargando usuarios...</option>
+    </select>
 
-    <div class="field">
-      <label for="password">Contraseña</label>
-      <i class="fas fa-lock left"></i>
-      <input id="password" type="password" placeholder="Ingrese contraseña" autocomplete="current-password">
+    <label>Contraseña</label>
+    <input id="password" type="password" placeholder="Ingrese contraseña">
 
-      <button type="button" class="toggle-pass" onclick="togglePassword()">
-        <i id="eyeIcon" class="fas fa-eye"></i>
-      </button>
-    </div>
-
-    <button id="btnLogin" class="btn" onclick="login()">
-      <span>Ingresar</span>
-      <i class="fas fa-sign-in-alt"></i>
-    </button>
+    <button id="btnLogin" onclick="login()">Ingresar</button>
 
     <div id="msg" class="msg"></div>
-    <div class="note">Conectado a hoja usuarios</div>
-  </main>
+  </div>
 
 <script>
-  /******************************************************
-   * CONFIGURACIÓN BÁSICA
-   ******************************************************/
-  document.addEventListener("DOMContentLoaded", cargarUsuarios);
+document.addEventListener("DOMContentLoaded", cargarUsuarios);
 
-  function mostrarError(texto){
-    document.getElementById("msg").textContent = texto || "";
+function msg(texto){
+  document.getElementById("msg").textContent = texto || "";
+}
+
+function loading(activo, texto){
+  const btn = document.getElementById("btnLogin");
+  btn.disabled = activo;
+  btn.textContent = activo ? (texto || "Cargando...") : "Ingresar";
+}
+
+async function api(data){
+  if(!window.CONFIG || !CONFIG.URL_APPS_SCRIPT){
+    throw new Error("No se cargó config.js");
   }
 
-  function setLoading(btn, loading, texto){
-    if(!btn) return;
+  const resp = await fetch(CONFIG.URL_APPS_SCRIPT, {
+    method: "POST",
+    mode: "cors",
+    body: JSON.stringify(data)
+  });
 
-    if(loading){
-      btn.dataset.old = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${texto || "Cargando..."}`;
-    }else{
-      btn.disabled = false;
-      if(btn.dataset.old) btn.innerHTML = btn.dataset.old;
-    }
+  const text = await resp.text();
+
+  try{
+    return JSON.parse(text);
+  }catch(e){
+    console.error("Respuesta Apps Script:", text);
+    throw new Error("Apps Script no devolvió JSON válido.");
   }
+}
 
-  function togglePassword(){
-    const input = document.getElementById("password");
-    const icon = document.getElementById("eyeIcon");
+async function cargarUsuarios(){
+  const select = document.getElementById("usuario");
+  msg("");
 
-    if(input.type === "password"){
-      input.type = "text";
-      icon.classList.remove("fa-eye");
-      icon.classList.add("fa-eye-slash");
-    }else{
-      input.type = "password";
-      icon.classList.remove("fa-eye-slash");
-      icon.classList.add("fa-eye");
-    }
-  }
+  try{
+    const data = await api({ action:"listarUsuarios" });
 
-  /******************************************************
-   * API POST A APPS SCRIPT
-   * Igual al método que ya te funciona en otras apps.
-   ******************************************************/
-  async function api(datos){
-    if(!window.CONFIG || !CONFIG.URL_APPS_SCRIPT){
-      throw new Error("No se cargó config.js o falta URL_APPS_SCRIPT.");
+    if(!data.ok){
+      throw new Error(data.error || "No se pudieron cargar usuarios");
     }
 
-    const response = await fetch(CONFIG.URL_APPS_SCRIPT, {
-      method: "POST",
-      mode: "cors",
-      body: JSON.stringify(datos)
+    select.innerHTML = '<option value="">Seleccione usuario</option>';
+
+    if(!data.usuarios || data.usuarios.length === 0){
+      select.innerHTML = '<option value="">Sin usuarios</option>';
+      msg("No hay usuarios en la hoja usuarios.");
+      return;
+    }
+
+    data.usuarios.forEach(u => {
+      const op = document.createElement("option");
+      op.value = u;
+      op.textContent = u;
+      select.appendChild(op);
     });
 
-    const text = await response.text();
+  }catch(e){
+    select.innerHTML = '<option value="">Error al cargar</option>';
+    msg("Error al cargar usuarios:\n" + e.message);
+  }
+}
 
-    try{
-      return JSON.parse(text);
-    }catch(e){
-      console.error("Respuesta no JSON:", text);
-      throw new Error("Apps Script no devolvió JSON válido.");
-    }
+async function login(){
+  const usuario = document.getElementById("usuario").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  msg("");
+
+  if(!usuario){
+    msg("Seleccione usuario.");
+    return;
   }
 
-  /******************************************************
-   * CARGAR LISTA DE USUARIOS
-   * Acción esperada en Código.gs: listarUsuarios
-   ******************************************************/
-  async function cargarUsuarios(){
-    const select = document.getElementById("usuario");
-    mostrarError("");
-
-    try{
-      const data = await api({ action: "listarUsuarios" });
-
-      if(!data.ok){
-        throw new Error(data.error || "No se pudieron cargar usuarios.");
-      }
-
-      select.innerHTML = '<option value="">Seleccione usuario</option>';
-
-      const usuarios = data.usuarios || [];
-
-      if(usuarios.length === 0){
-        select.innerHTML = '<option value="">Sin usuarios registrados</option>';
-        mostrarError("No hay usuarios en la hoja usuarios.");
-        return;
-      }
-
-      usuarios.forEach(u => {
-        const op = document.createElement("option");
-        op.value = u;
-        op.textContent = u;
-        select.appendChild(op);
-      });
-
-    }catch(err){
-      console.error("Error al cargar usuarios:", err);
-      select.innerHTML = '<option value="">Error al cargar usuarios</option>';
-      mostrarError(err.message || "Error al cargar usuarios.");
-    }
+  if(!password){
+    msg("Ingrese contraseña.");
+    return;
   }
 
-  /******************************************************
-   * LOGIN
-   * Acción esperada en Código.gs: login
-   ******************************************************/
-  async function login(){
-    const usuario = document.getElementById("usuario").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const btn = document.getElementById("btnLogin");
+  loading(true, "Validando...");
 
-    mostrarError("");
+  try{
+    const data = await api({
+      action:"login",
+      usuario: usuario,
+      password: password,
+      user: usuario,
+      pass: password
+    });
 
-    if(!usuario){
-      mostrarError("Seleccione usuario.");
-      return;
+    const acceso = data.ok === true || data.acceso === true;
+
+    if(!acceso){
+      throw new Error(data.error || data.message || "Usuario o contraseña incorrectos.");
     }
 
-    if(!password){
-      mostrarError("Ingrese contraseña.");
-      return;
-    }
+    sessionStorage.setItem("usuario", data.usuario || usuario);
+    sessionStorage.setItem("sector", data.sector || "");
+    sessionStorage.setItem("tipoUsuario", data.tipoUsuario || data.tipo_usuario || "");
+    sessionStorage.setItem("tipoNombre", data.tipoNombre || "");
+    sessionStorage.setItem("cuadrilla", data.cuadrilla || "");
 
-    setLoading(btn, true, "Validando...");
+    window.location.href = "home.html";
 
-    try{
-      const data = await api({
-        action: "login",
-        usuario: usuario,
-        password: password
-      });
-
-      if(!data.ok){
-        throw new Error(data.error || "Usuario o contraseña incorrectos.");
-      }
-
-      sessionStorage.setItem("usuario", data.usuario || usuario);
-      sessionStorage.setItem("sector", data.sector || "");
-      sessionStorage.setItem("tipoUsuario", data.tipoUsuario || "");
-      sessionStorage.setItem("tipoNombre", data.tipoNombre || "");
-      sessionStorage.setItem("cuadrilla", data.cuadrilla || "");
-
-      window.location.href = "home.html";
-
-    }catch(err){
-      console.error("Error en login:", err);
-      mostrarError(err.message || "Error al iniciar sesión.");
-    }finally{
-      setLoading(btn, false);
-    }
+  }catch(e){
+    msg("Error en login:\n" + e.message);
+  }finally{
+    loading(false);
   }
+}
 
-  /******************************************************
-   * ENTER PARA INGRESAR
-   ******************************************************/
-  document.addEventListener("keydown", function(e){
-    if(e.key === "Enter"){
-      login();
-    }
-  });
+document.addEventListener("keydown", e => {
+  if(e.key === "Enter") login();
+});
 </script>
 
 </body>

@@ -145,25 +145,34 @@ function loading(activo, texto){
   btn.textContent = activo ? (texto || "Cargando...") : "Ingresar";
 }
 
-async function api(data){
-  if(!window.CONFIG || !CONFIG.URL_APPS_SCRIPT){
-    throw new Error("No se cargó config.js");
-  }
+function apiJSONP(params){
+  return new Promise((resolve, reject) => {
+    if(!window.CONFIG || !CONFIG.URL_APPS_SCRIPT){
+      reject(new Error("No se cargó config.js o falta URL_APPS_SCRIPT."));
+      return;
+    }
 
-  const resp = await fetch(CONFIG.URL_APPS_SCRIPT, {
-    method: "POST",
-    mode: "cors",
-    body: JSON.stringify(data)
+    const callbackName = "jsonp_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+    params.callback = callbackName;
+
+    const query = new URLSearchParams(params).toString();
+    const script = document.createElement("script");
+
+    window[callbackName] = function(data){
+      resolve(data);
+      script.remove();
+      delete window[callbackName];
+    };
+
+    script.onerror = function(){
+      reject(new Error("Error conectando con Apps Script."));
+      script.remove();
+      delete window[callbackName];
+    };
+
+    script.src = CONFIG.URL_APPS_SCRIPT + "?" + query;
+    document.body.appendChild(script);
   });
-
-  const text = await resp.text();
-
-  try{
-    return JSON.parse(text);
-  }catch(e){
-    console.error("Respuesta Apps Script:", text);
-    throw new Error("Apps Script no devolvió JSON válido.");
-  }
 }
 
 async function cargarUsuarios(){
@@ -171,7 +180,7 @@ async function cargarUsuarios(){
   msg("");
 
   try{
-    const data = await api({ action:"listarUsuarios" });
+    const data = await apiJSONP({ action:"listarUsuarios" });
 
     if(!data.ok){
       throw new Error(data.error || "No se pudieron cargar usuarios");
@@ -179,13 +188,7 @@ async function cargarUsuarios(){
 
     select.innerHTML = '<option value="">Seleccione usuario</option>';
 
-    if(!data.usuarios || data.usuarios.length === 0){
-      select.innerHTML = '<option value="">Sin usuarios</option>';
-      msg("No hay usuarios en la hoja usuarios.");
-      return;
-    }
-
-    data.usuarios.forEach(u => {
+    (data.usuarios || []).forEach(u => {
       const op = document.createElement("option");
       op.value = u;
       op.textContent = u;
@@ -217,7 +220,7 @@ async function login(){
   loading(true, "Validando...");
 
   try{
-    const data = await api({
+    const data = await apiJSONP({
       action:"login",
       usuario: usuario,
       password: password,
@@ -225,15 +228,13 @@ async function login(){
       pass: password
     });
 
-    const acceso = data.ok === true || data.acceso === true;
-
-    if(!acceso){
-      throw new Error(data.error || data.message || "Usuario o contraseña incorrectos.");
+    if(!(data.ok === true || data.acceso === true)){
+      throw new Error(data.error || "Usuario o contraseña incorrectos.");
     }
 
     sessionStorage.setItem("usuario", data.usuario || usuario);
     sessionStorage.setItem("sector", data.sector || "");
-    sessionStorage.setItem("tipoUsuario", data.tipoUsuario || data.tipo_usuario || "");
+    sessionStorage.setItem("tipo_usuario", data.tipo_usuario || data.tipoUsuario || "");
     sessionStorage.setItem("tipoNombre", data.tipoNombre || "");
     sessionStorage.setItem("cuadrilla", data.cuadrilla || "");
 

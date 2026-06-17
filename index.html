@@ -8,103 +8,105 @@
   <script src="config.js"></script>
 
   <style>
-    body{
-      margin:0;
-      font-family:Segoe UI, Arial, sans-serif;
-      background:#f3f6fb;
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f3f6fb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
     }
 
-    .card{
-      width:100%;
-      max-width:380px;
-      background:white;
-      border-radius:20px;
-      padding:24px 20px;
-      box-shadow:0 14px 35px rgba(0,0,0,.15);
-      text-align:center;
+    .card {
+      width: 100%;
+      max-width: 380px;
+      background: #fff;
+      border-radius: 20px;
+      padding: 24px 20px;
+      box-shadow: 0 14px 35px rgba(0,0,0,.15);
+      text-align: center;
     }
 
-    .logo{
-      background:white;
-      width:90px;
-      margin:0 auto 14px;
-      border-radius:14px;
-      padding:8px;
-      box-shadow:0 6px 15px rgba(0,0,0,.12);
+    .logo {
+      width: 90px;
+      margin: 0 auto 14px;
+      background: #fff;
+      border-radius: 14px;
+      padding: 8px;
+      box-shadow: 0 6px 15px rgba(0,0,0,.12);
     }
 
-    .logo img{
-      width:72px;
-      display:block;
-      margin:auto;
+    .logo img {
+      width: 72px;
+      display: block;
+      margin: auto;
     }
 
-    h1{
-      margin:0;
-      font-size:20px;
-      color:#201f1e;
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      color: #201f1e;
     }
 
-    .sub{
-      margin:7px 0 22px;
-      font-size:13px;
-      color:#605e5c;
+    .sub {
+      margin: 7px 0 22px;
+      color: #605e5c;
+      font-size: 13px;
     }
 
-    label{
-      display:block;
-      text-align:left;
-      font-size:13px;
-      font-weight:700;
-      color:#605e5c;
-      margin:12px 0 6px;
+    label {
+      display: block;
+      text-align: left;
+      font-weight: 700;
+      color: #605e5c;
+      font-size: 13px;
+      margin: 12px 0 6px;
     }
 
-    select,input{
-      width:100%;
-      box-sizing:border-box;
-      border:1px solid #d2d0ce;
-      border-radius:12px;
-      padding:13px;
-      font-size:16px;
-      outline:none;
+    select,
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #d2d0ce;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 16px;
+      outline: none;
     }
 
-    select:focus,input:focus{
-      border-color:#0078d4;
-      box-shadow:0 0 0 4px rgba(0,120,212,.12);
+    select:focus,
+    input:focus {
+      border-color: #0078d4;
+      box-shadow: 0 0 0 4px rgba(0,120,212,.12);
     }
 
-    button{
-      width:100%;
-      border:none;
-      border-radius:12px;
-      background:#0078d4;
-      color:white;
-      padding:14px;
-      margin-top:18px;
-      font-size:16px;
-      font-weight:800;
-      cursor:pointer;
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      background: #0078d4;
+      color: #fff;
+      padding: 14px;
+      margin-top: 18px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
     }
 
-    button:disabled{
-      opacity:.65;
-      cursor:not-allowed;
+    button:disabled {
+      opacity: .65;
+      cursor: not-allowed;
     }
 
-    .msg{
-      min-height:20px;
-      margin-top:14px;
-      font-size:13px;
-      color:#d13438;
-      font-weight:700;
-      white-space:pre-line;
+    .msg {
+      min-height: 20px;
+      margin-top: 14px;
+      color: #d13438;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: pre-line;
     }
   </style>
 </head>
@@ -113,18 +115,18 @@
 
   <div class="card">
     <div class="logo">
-      <img src="https://raw.githubusercontent.com/zelaya27/IMAGENES_AZ/main/UTCD%20Vertical.png">
+      <img src="https://raw.githubusercontent.com/zelaya27/IMAGENES_AZ/main/UTCD%20Vertical.png" alt="UTCD">
     </div>
 
     <h1>REPORTES AGRUPADOS UTCD</h1>
     <div class="sub">Ingreso de usuario operativo</div>
 
-    <label>Usuario</label>
+    <label for="usuario">Usuario</label>
     <select id="usuario">
       <option value="">Cargando usuarios...</option>
     </select>
 
-    <label>Contraseña</label>
+    <label for="password">Contraseña</label>
     <input id="password" type="password" placeholder="Ingrese contraseña">
 
     <button id="btnLogin" onclick="login()">Ingresar</button>
@@ -135,120 +137,120 @@
 <script>
 document.addEventListener("DOMContentLoaded", cargarUsuarios);
 
-function msg(texto){
+function mostrarMensaje(texto) {
   document.getElementById("msg").textContent = texto || "";
 }
 
-function loading(activo, texto){
+function setLoading(activo, texto) {
   const btn = document.getElementById("btnLogin");
   btn.disabled = activo;
   btn.textContent = activo ? (texto || "Cargando...") : "Ingresar";
 }
 
-function apiJSONP(params){
-  return new Promise((resolve, reject) => {
-    if(!window.CONFIG || !CONFIG.URL_APPS_SCRIPT){
-      reject(new Error("No se cargó config.js o falta URL_APPS_SCRIPT."));
-      return;
-    }
+async function api(data) {
+  if (!window.CONFIG || !window.CONFIG.URL_APPS_SCRIPT) {
+    throw new Error("No se cargó config.js o falta URL_APPS_SCRIPT.");
+  }
 
-    const callbackName = "jsonp_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
-    params.callback = callbackName;
-
-    const query = new URLSearchParams(params).toString();
-    const script = document.createElement("script");
-
-    window[callbackName] = function(data){
-      resolve(data);
-      script.remove();
-      delete window[callbackName];
-    };
-
-    script.onerror = function(){
-      reject(new Error("Error conectando con Apps Script."));
-      script.remove();
-      delete window[callbackName];
-    };
-
-    script.src = CONFIG.URL_APPS_SCRIPT + "?" + query;
-    document.body.appendChild(script);
+  const response = await fetch(window.CONFIG.URL_APPS_SCRIPT, {
+    method: "POST",
+    body: JSON.stringify(data)
   });
+
+  const text = await response.text();
+
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    console.error("Respuesta no JSON:", text);
+    throw new Error("Apps Script no devolvió JSON válido.");
+  }
 }
 
-async function cargarUsuarios(){
+async function cargarUsuarios() {
   const select = document.getElementById("usuario");
-  msg("");
+  mostrarMensaje("");
 
-  try{
-    const data = await apiJSONP({ action:"listarUsuarios" });
+  try {
+    const data = await api({
+      action: "listarUsuarios"
+    });
 
-    if(!data.ok){
-      throw new Error(data.error || "No se pudieron cargar usuarios");
+    if (!data.ok) {
+      throw new Error(data.error || "No se pudieron cargar usuarios.");
     }
 
     select.innerHTML = '<option value="">Seleccione usuario</option>';
 
-    (data.usuarios || []).forEach(u => {
-      const op = document.createElement("option");
-      op.value = u;
-      op.textContent = u;
-      select.appendChild(op);
+    if (!data.usuarios || data.usuarios.length === 0) {
+      select.innerHTML = '<option value="">Sin usuarios registrados</option>';
+      mostrarMensaje("No hay usuarios registrados en la hoja usuarios.");
+      return;
+    }
+
+    data.usuarios.forEach(usuario => {
+      const option = document.createElement("option");
+      option.value = usuario;
+      option.textContent = usuario;
+      select.appendChild(option);
     });
 
-  }catch(e){
-    select.innerHTML = '<option value="">Error al cargar</option>';
-    msg("Error al cargar usuarios:\n" + e.message);
+  } catch (error) {
+    console.error("Error al cargar usuarios:", error);
+    select.innerHTML = '<option value="">Error al cargar usuarios</option>';
+    mostrarMensaje("Error al cargar usuarios:\n" + error.message);
   }
 }
 
-async function login(){
+async function login() {
   const usuario = document.getElementById("usuario").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  msg("");
+  mostrarMensaje("");
 
-  if(!usuario){
-    msg("Seleccione usuario.");
+  if (!usuario) {
+    mostrarMensaje("Seleccione usuario.");
     return;
   }
 
-  if(!password){
-    msg("Ingrese contraseña.");
+  if (!password) {
+    mostrarMensaje("Ingrese contraseña.");
     return;
   }
 
-  loading(true, "Validando...");
+  setLoading(true, "Validando...");
 
-  try{
-    const data = await apiJSONP({
-      action:"login",
+  try {
+    const data = await api({
+      action: "login",
       usuario: usuario,
-      password: password,
-      user: usuario,
-      pass: password
+      password: password
     });
 
-    if(!(data.ok === true || data.acceso === true)){
+    if (!data.ok) {
       throw new Error(data.error || "Usuario o contraseña incorrectos.");
     }
 
     sessionStorage.setItem("usuario", data.usuario || usuario);
     sessionStorage.setItem("sector", data.sector || "");
-    sessionStorage.setItem("tipo_usuario", data.tipo_usuario || data.tipoUsuario || "");
+    sessionStorage.setItem("tipoUsuario", data.tipoUsuario || "");
     sessionStorage.setItem("tipoNombre", data.tipoNombre || "");
     sessionStorage.setItem("cuadrilla", data.cuadrilla || "");
 
-    window.location.href = "home.html";
+    window.location.href = "panel.html";
 
-  }catch(e){
-    msg("Error en login:\n" + e.message);
-  }finally{
-    loading(false);
+  } catch (error) {
+    console.error("Error en login:", error);
+    mostrarMensaje("Error en login:\n" + error.message);
+  } finally {
+    setLoading(false);
   }
 }
 
-document.addEventListener("keydown", e => {
-  if(e.key === "Enter") login();
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    login();
+  }
 });
 </script>
 

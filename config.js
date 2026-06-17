@@ -2,5 +2,5 @@
  * CONFIGURACIÓN APP REPORTES AGRUPADOS UTCD
  ******************************************************/
 const CONFIG = {
-  URL_APPS_SCRIPT: "https://script.google.com/macros/s/AKfycbyCFVN-6skZVPOZ1RBvTxH4pLjk_RSUnED3A66X6slG74W98lvGwce8IEkzTq4V2Pzn/exec"
+  URL_APPS_SCRIPT: "https://script.google.com/macros/s/AKfycbzXEIO1Xx1b2S6-u_1A6kSLNm3SyGJQ3eI4SW-8k1fl3aI1hlWLE4C4u4zJtM0zup3g/exec"
 };
